@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String currentPhone = "";
   String currentAddress = "";
+  String name = "";
 
   List<AppInfo> apps = [];
 
@@ -25,18 +26,15 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      currentPhone = prefs.getString('currentPhone') ?? currentPhone;
-      currentAddress = prefs.getString('currentAddress') ?? currentAddress;
+      name = prefs.getString('name') ?? currentPhone;
+      currentPhone = prefs.getString('phone') ?? currentPhone;
+      currentAddress = prefs.getString('address') ?? currentAddress;
     });
-
-    if(currentPhone == ""){
-      _editPersonalDataDialog();
-    }
   }
 
   Future<void> _savePrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('currentPhone', currentPhone);
+    await prefs.setString('Phone', currentPhone);
     await prefs.setString('currentAddress', currentAddress);
   }
 
@@ -81,7 +79,6 @@ class _HomePageState extends State<HomePage> {
                 await _savePrefs();
                 Navigator.of(context).pop();
               } else {
-                // magari mostra errore per campi vuoti
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Compila entrambi i campi")),
                 );
@@ -192,32 +189,56 @@ class _HomePageState extends State<HomePage> {
     final textColorError = theme.colorScheme.error;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Le mie info'),
-        actions: [
-          IconButton(
-          icon: Icon(Icons.edit),
-          tooltip: "Modifica dati personali",
-          onPressed: _editPersonalDataDialog,
-          ),
-        ],
+      appBar: AppBar(
+        title: Text('Home',style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Numero di telefono: $currentPhone", style: theme.textTheme.bodyLarge),
-                SizedBox(height: 8),
-                Text("Indirizzo: $currentAddress", style: theme.textTheme.bodyLarge),
-              ],
-            ),
+            child:
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage('assets/images/profile.png'),
+                      ),
+                      SizedBox(height: 16),
+                      Text(currentPhone, style: theme.textTheme.bodyLarge),
+                      SizedBox(height: 8),
+                      Text(currentAddress, style: theme.textTheme.bodyLarge),
+                      Align(
+                        alignment: Alignment.center, // o Alignment.centerLeft / right
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            onPressed: _editPersonalDataDialog,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Edit personal data"),
+                                SizedBox(width: 8),
+                                Icon(Icons.edit),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+
           ),
           SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text("App collegate", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            child: Text("Apps", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
           ),
           SizedBox(height: 8),
           Expanded(
@@ -241,13 +262,13 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Telefono: ${app.phone}",
+                          "Number: ${app.phone}",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: isPhoneMatching ? null : textColorError,
                           ),
                         ),
                         Text(
-                          "Indirizzo: ${app.address}",
+                          "Address: ${app.address}",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: isAddressMatching ? null : textColorError,
                           ),
@@ -279,7 +300,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _addAppDialog,
         child: Icon(Icons.add),
-        tooltip: "Nuova registrazione",
+        tooltip: "Add app",
       ),
     );
   }

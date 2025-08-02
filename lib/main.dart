@@ -1,11 +1,12 @@
 import 'dart:io';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'home.dart';
+import 'welcome.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -13,11 +14,16 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   }
 
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final hasName = prefs.getString('name') != null;
+
+  runApp(MyApp(showWelcome: !hasName));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.showWelcome});
+
+  final bool showWelcome;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +42,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system, // o .dark se vuoi forzarlo
-      home: HomePage(),
+      home: showWelcome
+          ? WelcomeScreen(onContinue: () {
+        // You can navigate to your HomePage here
+      })
+          : HomePage(),
     );
   }
 }
