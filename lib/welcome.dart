@@ -6,6 +6,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'home.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WelcomeScreen extends StatefulWidget {
 
@@ -208,6 +210,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         );
                       },
                       child: const Text("Continue"),
+                    ),
+                    SizedBox(height: 8,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onBackground),
+                          children: [
+                            const TextSpan(text: "By continuing, you accept the "),
+                            TextSpan(
+                              text: "Privacy Policy",
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  launchUrl(Uri.parse("https://your-privacy-policy-url.com"));
+                                },
+                            ),
+                            const TextSpan(text: "."),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ],
