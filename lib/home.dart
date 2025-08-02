@@ -28,6 +28,10 @@ class _HomePageState extends State<HomePage> {
       currentPhone = prefs.getString('currentPhone') ?? currentPhone;
       currentAddress = prefs.getString('currentAddress') ?? currentAddress;
     });
+
+    if(currentPhone == ""){
+      _editPersonalDataDialog();
+    }
   }
 
   Future<void> _savePrefs() async {
