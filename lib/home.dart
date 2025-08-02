@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-class AppInfo {
-  final String appName;
-  final String phone;
-  final String address;
-  final bool isPhoneUpdated;
-  final bool isAddressUpdated;
-  final String? url;
-
-  AppInfo({
-    required this.appName,
-    required this.phone,
-    required this.address,
-    required this.isPhoneUpdated,
-    required this.isAddressUpdated,
-    this.url,
-  });
-}
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:movesync/database/database.dart';
+import 'package:movesync/model/AppInfo.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,27 +10,91 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final String currentPhone = "+39 333 1234567";
-  final String currentAddress = "Via Roma 1, Milano";
+  String currentPhone = "";
+  String currentAddress = "";
 
-  List<AppInfo> apps = [
-    AppInfo(
-      appName: "Amazon",
-      phone: "+39 333 1234567",
-      address: "Via Roma 1, Milano",
-      isPhoneUpdated: true,
-      isAddressUpdated: true,
-      url: "https://www.amazon.it",
-    ),
-    AppInfo(
-      appName: "Netflix",
-      phone: "+39 333 9876543",
-      address: "Via Vecchia 10, Torino",
-      isPhoneUpdated: false,
-      isAddressUpdated: false,
-      url: "https://www.netflix.com",
-    ),
-  ];
+  List<AppInfo> apps = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+    _loadAppsFromDB();
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentPhone = prefs.getString('currentPhone') ?? currentPhone;
+      currentAddress = prefs.getString('currentAddress') ?? currentAddress;
+    });
+  }
+
+  Future<void> _savePrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentPhone', currentPhone);
+    await prefs.setString('currentAddress', currentAddress);
+  }
+
+  void _editPersonalDataDialog() {
+    final phoneController = TextEditingController(text: currentPhone);
+    final addressController = TextEditingController(text: currentAddress);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Modifica dati personali"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: phoneController,
+              decoration: InputDecoration(labelText: "Numero di telefono"),
+              keyboardType: TextInputType.phone,
+            ),
+            TextField(
+              controller: addressController,
+              decoration: InputDecoration(labelText: "Indirizzo"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: Text("Annulla"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          ElevatedButton(
+            child: Text("Salva"),
+            onPressed: () async {
+              final newPhone = phoneController.text.trim();
+              final newAddress = addressController.text.trim();
+
+              if (newPhone.isNotEmpty && newAddress.isNotEmpty) {
+                setState(() {
+                  currentPhone = newPhone;
+                  currentAddress = newAddress;
+                });
+                await _savePrefs();
+                Navigator.of(context).pop();
+              } else {
+                // magari mostra errore per campi vuoti
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Compila entrambi i campi")),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadAppsFromDB() async {
+    final data = await DatabaseHelper.instance.getAllApps();
+    setState(() {
+      apps = data;
+    });
+  }
 
   void _addAppDialog() {
     final nameController = TextEditingController();
@@ -75,22 +124,20 @@ class _HomePageState extends State<HomePage> {
           ),
           ElevatedButton(
             child: Text("Aggiungi"),
-            onPressed: () {
+            onPressed: () async {
               final appName = nameController.text.trim();
               final url = urlController.text.trim().isNotEmpty ? urlController.text.trim() : null;
 
               if (appName.isNotEmpty) {
-                setState(() {
-                  apps.add(
-                      AppInfo(
-                    appName: appName,
-                    phone: currentPhone,
-                    address: currentAddress,
-                    isPhoneUpdated: true,
-                    isAddressUpdated: true,
-                    url: url,
-                  ));
-                });
+                final newApp = AppInfo(
+                  appName: appName,
+                  phone: currentPhone,
+                  address: currentAddress,
+                  url: url,
+                );
+
+                await DatabaseHelper.instance.insertApp(newApp);
+                await _loadAppsFromDB();
                 Navigator.of(context).pop();
               }
             },
@@ -114,10 +161,10 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             child: Text("Elimina"),
             style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-            onPressed: () {
-              setState(() {
-                apps.removeAt(index);
-              });
+            onPressed: () async {
+              final appName = apps[index].appName;
+              await DatabaseHelper.instance.deleteApp(appName);
+              await _loadAppsFromDB();
               Navigator.of(context).pop();
             },
           ),
@@ -141,7 +188,15 @@ class _HomePageState extends State<HomePage> {
     final textColorError = theme.colorScheme.error;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Le mie info')),
+      appBar: AppBar(title: Text('Le mie info'),
+        actions: [
+          IconButton(
+          icon: Icon(Icons.edit),
+          tooltip: "Modifica dati personali",
+          onPressed: _editPersonalDataDialog,
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -166,17 +221,14 @@ class _HomePageState extends State<HomePage> {
               itemCount: apps.length,
               itemBuilder: (context, index) {
                 final app = apps[index];
-                final isUpdated = app.isPhoneUpdated && app.isAddressUpdated;
-                final tileColor = isUpdated
-                    ? theme.colorScheme.secondaryContainer.withOpacity(0.3)
-                    : theme.colorScheme.errorContainer.withOpacity(0.3);
+                final isPhoneMatching = app.phone == currentPhone;
+                final isAddressMatching = app.address == currentAddress;
+                final isUpdated = isPhoneMatching && isAddressMatching;
 
                 return Container(
-                  color: tileColor,
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   decoration: BoxDecoration(
-                    color: tileColor,
-                    borderRadius: BorderRadius.circular(12), // smussa gli angoli
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -187,13 +239,13 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           "Telefono: ${app.phone}",
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: app.isPhoneUpdated ? null : textColorError,
+                            color: isPhoneMatching ? null : textColorError,
                           ),
                         ),
                         Text(
                           "Indirizzo: ${app.address}",
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: app.isAddressUpdated ? null : textColorError,
+                            color: isAddressMatching ? null : textColorError,
                           ),
                         ),
                         if (app.url != null)
