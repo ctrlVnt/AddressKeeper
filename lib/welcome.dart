@@ -3,11 +3,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'home.dart';
+import 'package:flutter/services.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  final VoidCallback onContinue;
 
-  const WelcomeScreen({Key? key, required this.onContinue}) : super(key: key);
+  const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -76,8 +78,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       phone = _phoneController.text;
       address = _addressController.text;
     });
-
-    widget.onContinue(); // vai alla home
   }
 
   @override
@@ -85,6 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: NeumorphicTheme.baseColor(context),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -100,7 +101,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "This app works completely offline.",
+                    "This app works completely offline",
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -108,37 +109,84 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
                   GestureDetector(
                     onTap: _pickImage,
-                    child: CircleAvatar(
+                    child: profileImagePath == null
+                        ? Neumorphic(
+                      style: const NeumorphicStyle(
+                        shape: NeumorphicShape.convex,
+                        depth: 8,
+                        boxShape: NeumorphicBoxShape.circle(),
+                      ),
+                      child: const SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Center(
+                          child: Icon(Icons.person, size: 50),
+                        ),
+                      ),
+                    )
+                        : CircleAvatar(
                       radius: 50,
-                      backgroundImage: profileImagePath != null ? FileImage(File(profileImagePath!)) : null,
-                      child: profileImagePath == null
-                          ? const Icon(Icons.person, size: 50)
-                          : null,
+                      backgroundImage: FileImage(File(profileImagePath!)),
                     ),
                   ),
 
                   const SizedBox(height: 24),
 
                   if (name == null || phone == null || address == null) ...[
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(labelText: "Name"),
-                      validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                    Neumorphic(
+                        style: NeumorphicStyle(
+                          depth: -4,
+                          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        child: TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            labelText: "Name"
+                        ),
+                        validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                      ),
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: const InputDecoration(labelText: "Phone"),
-                      validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                    Neumorphic(
+                      style: NeumorphicStyle(
+                        depth: -4,
+                        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: TextFormField(
+                        controller: _phoneController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          labelText: "Phone",
+                        ),
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (value) =>
+                        value == null || value.isEmpty ? "Required" : null,
+                      ),
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _addressController,
-                      decoration: const InputDecoration(labelText: "Address"),
-                      validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                    Neumorphic(
+                      style: NeumorphicStyle(
+                        depth: -4,
+                        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child:TextFormField(
+                        controller: _addressController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            labelText: "Address"
+                        ),
+                        validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                      ),
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
+                    NeumorphicButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _saveAndContinue();
@@ -153,8 +201,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 4),
                     Text("Address: $address", style: theme.textTheme.bodyLarge),
                     const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: widget.onContinue,
+                    NeumorphicButton(
+                      onPressed: (){
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
                       child: const Text("Continue"),
                     ),
                   ],

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 import 'home.dart';
 import 'welcome.dart';
@@ -27,25 +28,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        useMaterial3: true,
+    return NeumorphicApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Address up',
+      themeMode: ThemeMode.system,
+      theme: NeumorphicThemeData(
+        baseColor: Color(0xFFFFFFFF),
+        lightSource: LightSource.topLeft,
+        depth: 10,
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
+      darkTheme: NeumorphicThemeData(
+        baseColor: Color(0xFF3E3E3E),
+        lightSource: LightSource.topLeft,
+        shadowLightColor: Colors.grey,
+        depth: 3,
       ),
-      themeMode: ThemeMode.system, // o .dark se vuoi forzarlo
       home: showWelcome
-          ? WelcomeScreen(onContinue: () {
-        // You can navigate to your HomePage here
-      })
+          ? WelcomeScreen()
           : HomePage(),
     );
   }
