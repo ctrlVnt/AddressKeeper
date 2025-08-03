@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       darkTheme: NeumorphicThemeData(
         baseColor: Color(0xFF3E3E3E),
         lightSource: LightSource.topLeft,
-        shadowLightColor: Colors.grey,
+        shadowLightColor: Colors.grey.shade700,
         depth: 3,
       ),
       home: showWelcome

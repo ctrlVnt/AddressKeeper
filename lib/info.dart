@@ -41,20 +41,20 @@ class InfoPage extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 NeumorphicButton(
-                  onPressed: () => _openUrl("https://yourwebsite.com"),
+                  onPressed: () => _openUrl("https://riccardoventurini.dev"),
                   padding: const EdgeInsets.all(12),
                   child: const Text("Visit My Website 🌐"),
                 ),
                 const SizedBox(height: 12),
 
                 NeumorphicButton(
-                  onPressed: () => _openUrl("https://www.buymeacoffee.com/yourusername"),
+                  onPressed: () => _openUrl("https://buymeacoffee.com/v3ntuz"),
                   padding: const EdgeInsets.all(12),
                   child: const Text("Buy Me a Coffee ☕"),
                 ),
                 const SizedBox(height: 12),
                 NeumorphicButton(
-                  onPressed: () => _openUrl("https://www.buymeacoffee.com/yourusername"),
+                  onPressed: () => _openUrl("https://github.com/ctrlVnt/movesync"),
                   padding: const EdgeInsets.all(12),
                   child: const Text("See the code source 👀"),
                 ),

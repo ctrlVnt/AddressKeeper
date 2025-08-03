@@ -82,7 +82,6 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Neumorphic(
                     style: NeumorphicStyle(
-                      shape: NeumorphicShape.flat,
                       boxShape: NeumorphicBoxShape.circle(),
                       depth: 4,
                       intensity: 0.8,
@@ -469,7 +468,6 @@ class _HomePageState extends State<HomePage> {
                   child: Neumorphic(
                     style: NeumorphicStyle(
                       depth: -4,
-                      intensity: 0.8,
                       boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
                     ),
                     child: Padding(
