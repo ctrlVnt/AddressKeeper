@@ -1,6 +1,10 @@
 # 📱 movesync
 
-_Keep track of every website and app where you've submitted your personal contact details — so you never forget to update them again._
+Keep track of every website and app where you've submitted your personal contact details, so you never forget to update them again.
+
+The name is not definitive, important things to do:
+- [ ] find a new name
+- [ ] create a logo
 
 ---
 
