@@ -1,16 +1,25 @@
-# movesync
+# 📱 movesync
 
-App to save number, creditcard and telephone on websites
+_Keep track of every website and app where you've submitted your personal contact details — so you never forget to update them again._
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 🔍 Track where you've entered your **phone number** and **home address**
+- 📝 Add websites or apps manually with optional URLs
+- 📌 See which apps have your most recent contact info
+- 🔔 Easily update and manage outdated entries
+- 🧠 Never forget where your data lives
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📸 Screenshots
+
+<p align="center">
+  <img src="screenshots/1.jpg" alt="Main screen" width="250">
+  <img src="screenshots/2.jpg" alt="Add contact info" width="250">
+  <img src="screenshots/3.jpg" alt="Manage entries" width="250">
+</p>
+
+---
