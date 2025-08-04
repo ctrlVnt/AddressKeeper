@@ -2,6 +2,8 @@
 
 Keep track of every website and app where you've submitted your personal contact details, so you never forget to update them again.
 
+[Google PlatStore download](https://play.google.com/store/apps/details?id=com.ctrlvnt.addresskeeper)
+
 ---
 
 ## ✨ Features
