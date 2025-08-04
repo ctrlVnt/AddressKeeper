@@ -231,7 +231,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  launchUrl(Uri.parse("https://your-privacy-policy-url.com"));
+                                  launchUrl(Uri.parse("https://riccardoventurini.dev/privacy/addresskeeper"));
                                 },
                             ),
                             const TextSpan(text: "."),

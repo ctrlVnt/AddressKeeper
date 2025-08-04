@@ -50,7 +50,7 @@ class InfoPage extends StatelessWidget {
                 const SizedBox(height: 32),
 
                 NeumorphicButton(
-                  onPressed: () => _openUrl("https://play.google.com/store/apps/details?id=com.yourapp.id"),
+                  onPressed: () => _openUrl("https://play.google.com/store/apps/details?id=com.ctrlvnt.addresskeeper"),
                   padding: const EdgeInsets.all(12),
                   child: const Text("Rate on Play Store ⭐"),
                 ),
@@ -76,7 +76,7 @@ class InfoPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 NeumorphicButton(
-                  onPressed: () => _openUrl("https://yourwebsite.com/privacy"),
+                  onPressed: () => _openUrl("https://riccardoventurini.dev/privacy/addresskeeper"),
                   padding: const EdgeInsets.all(12),
                   child: const Text("Privacy Policy 👤"),
                 ),
