@@ -1,4 +1,4 @@
-name: movesync
+name: addresskeeper
 description: "App to save number, creditcard and telephone on websites"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

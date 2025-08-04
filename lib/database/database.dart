@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:movesync/model/AppInfo.dart';
+import '../model/AppInfo.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();

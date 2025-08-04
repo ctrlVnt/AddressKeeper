@@ -37,16 +37,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> _pickImage() async {
-    var status = await Permission.photos.status;
-    if (!status.isGranted) {
-      status = await Permission.photos.request();
+    if (Platform.isAndroid || Platform.isIOS) {
+      var status = await Permission.photos.status;
       if (!status.isGranted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Permission to access photos is required.')),
-        );
-        return;
+        status = await Permission.photos.request();
+        if (!status.isGranted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Permission to access photos is required.')),
+          );
+          return;
+        }
       }
     }
+
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {

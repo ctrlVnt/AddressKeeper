@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:movesync/database/database.dart';
-import 'package:movesync/model/AppInfo.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
+import 'database/database.dart';
 import 'info.dart';
+import 'model/AppInfo.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +20,8 @@ class _HomePageState extends State<HomePage> {
   String currentAddress = "";
   String name = "";
   String profileImage = "";
+
+  double depthDialog = 0; //depth for dialogs
 
   List<AppInfo> apps = [];
 
@@ -51,7 +53,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         child: Neumorphic(
           style: NeumorphicStyle(
-            depth: 8,
+            depth: depthDialog,
             boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
           ),
           padding: EdgeInsets.all(20),
@@ -63,6 +65,17 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(height: 16),
                 GestureDetector(
                   onTap: () async {
+                    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+                      final picker = ImagePicker();
+                      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                      if (pickedFile != null) {
+                        setState(() {
+                          profileImage = pickedFile.path;
+                        });
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('profile_image', pickedFile.path);
+                      }
+                    }
                     final status = await Permission.photos.request();
                     if (status.isGranted) {
                       final picker = ImagePicker();
@@ -203,7 +216,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         child: Neumorphic(
           style: NeumorphicStyle(
-            depth: 8,
+            depth: depthDialog,
             boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
           ),
           padding: EdgeInsets.all(20),
@@ -292,7 +305,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         child: Neumorphic(
           style: NeumorphicStyle(
-            depth: 8,
+            depth: depthDialog,
             boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
@@ -364,16 +377,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: NeumorphicAppBar(
-        title: Text('Home',style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Address Keeper',style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           NeumorphicButton(
-            child: Icon(
-              Icons.info_outline,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
-            ),
             style: NeumorphicStyle(
               depth: 0,
               boxShape: NeumorphicBoxShape.circle(),
@@ -383,6 +390,12 @@ class _HomePageState extends State<HomePage> {
                 MaterialPageRoute(builder: (context) => InfoPage()),
               );
             },
+            child: Icon(
+              Icons.info_outline,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
           )
         ],
       ),

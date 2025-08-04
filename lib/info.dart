@@ -12,6 +12,22 @@ class InfoPage extends StatelessWidget {
     }
   }
 
+  Future<void> sendEmail() async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'giordanobruno227@gmail.com',
+      queryParameters: {
+        'subject': 'report for AddressKeeper',
+      },
+    );
+
+    if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri);
+    } else {
+      throw Exception('Could not launch email client');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return NeumorphicTheme(
@@ -54,7 +70,7 @@ class InfoPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 NeumorphicButton(
-                  onPressed: () => _openUrl("https://github.com/ctrlVnt/movesync"),
+                  onPressed: () => _openUrl("https://github.com/ctrlVnt/addresskeeper"),
                   padding: const EdgeInsets.all(12),
                   child: const Text("See the code source 👀"),
                 ),
@@ -64,7 +80,12 @@ class InfoPage extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   child: const Text("Privacy Policy 👤"),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
+                NeumorphicButton(
+                  onPressed: sendEmail,
+                  padding: const EdgeInsets.all(12),
+                  child: const Text("Send me bug or suggestions ✉"),
+                ),
               ],
             ),
           ),

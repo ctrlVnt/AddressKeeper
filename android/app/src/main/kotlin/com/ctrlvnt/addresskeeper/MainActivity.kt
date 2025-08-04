@@ -1,4 +1,4 @@
-package com.ctrlvnt.movesync
+package com.ctrlvnt.addresskeeper
 
 import io.flutter.embedding.android.FlutterActivity
 

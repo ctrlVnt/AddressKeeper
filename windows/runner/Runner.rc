@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.ctrlvnt" "\0"
-            VALUE "FileDescription", "movesync" "\0"
+            VALUE "FileDescription", "addresskeeper" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "movesync" "\0"
+            VALUE "InternalName", "addresskeeper" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.ctrlvnt. All rights reserved." "\0"
-            VALUE "OriginalFilename", "movesync.exe" "\0"
-            VALUE "ProductName", "movesync" "\0"
+            VALUE "OriginalFilename", "addresskeeper.exe" "\0"
+            VALUE "ProductName", "addresskeeper" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
